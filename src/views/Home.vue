@@ -6,16 +6,22 @@
 </template>
 
 <script>
+/*eslint-disable*/
 export default {
   name: 'Home',
   data() {
     return {
-      userName: '',
+      get userName() {
+        return localStorage.getItem('userName');
+      },
+      set userName(value) {
+        localStorage.setItem('userName', value);
+      },
     }
   },
   methods: {
     readyToChat() {
-      localStorage.setItem('userName', this.userName);
+      // this.userName = this.userName;
       this.$router.push('/message');
     },
   }
