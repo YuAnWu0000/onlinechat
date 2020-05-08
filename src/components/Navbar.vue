@@ -14,14 +14,13 @@
     </el-menu>
     <!-- logout dialog -->
     <el-dialog
-      title="提示"
+      title="溫馨小提醒"
       :visible.sync="dialogVisible"
-      width="30%"
-      :before-close="handleClose">
-      <span>这是一段信息</span>
+      width="30%">
+      <span>登出將會清除使用者名稱，是否登出？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="logOut()">确 定</el-button>
+        <el-button @click="notLogOut()">取消</el-button>
+        <el-button type="primary" @click="logOut()">確定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -43,14 +42,17 @@ export default {
     ...mapActions('common', ['clearUserName']),
     ...mapActions('navbar', ['setActiveMenu']),
     popOut() {
+      this.setActiveMenu('2');
       this.dialogVisible = true;
-      this.setActiveMenu('99');
+    },
+    notLogOut() {
+      this.dialogVisible = false;
+      this.setActiveMenu('2');
     },
     logOut() {
       this.clearUserName();
-      this.$router.push('/');
       this.dialogVisible = false;
-      this.setActiveMenu('1');
+      this.$router.push('/');
     }
   },
   mounted() {
