@@ -8,79 +8,162 @@
           </div>
           <div class="message-box">
             <div v-if="message.sender === userName" class="message-time">{{ message.time }}</div>
-            <div class="message-content">
+            <div v-if="message.type === 'text'" class="message-content">
               {{ message.content }}
+            </div>
+            <div v-if="message.type === 'image'">
+              <img :src="message.content" class="message-image">
             </div>
             <div v-if="message.sender !== userName" class="message-time">{{ message.time }}</div>
           </div>
         </div>
       </div>
-      <div class="input-area">
-        <div class="icon-col" @click="sendMessage('image')">
-          <i class="el-icon-picture-outline icon-img"></i>
+        <div :class="inputClass">
+        <div class="input-area">
+          <div class="icon-col" @click="toggleImage()">
+            <i class="el-icon-picture-outline icon-img"></i>
+          </div>
+          <div class="input-col">
+            <el-input v-model="message" placeholder="講點什麼吧..."></el-input>
+          </div>
+          <div class="btn-col">
+            <el-button type="primary" icon="el-icon-s-promotion" @click="sendMessage('text')" class="send-btn" >送出</el-button>
+          </div>
         </div>
-        <div class="input-col">
-          <el-input v-model="message" placeholder="講點什麼吧..."></el-input>
+        <div v-show="imageVisible" class="image-area">
+          <el-row class="image-row">
+            <el-col :span="8" class="image-col">
+              <img src="@/assets/images/genji.png" class="image" @click="sendMessage('image', 'genji')">
+            </el-col>
+            <el-col :span="8" class="image-col">
+              <img src="@/assets/images/dva.png" class="image" @click="sendMessage('image', 'dva')">
+            </el-col>
+            <el-col :span="8" class="image-col">
+              <img src="@/assets/images/reaper.png" class="image" @click="sendMessage('image', 'reaper')">
+            </el-col>
+          </el-row>
+          <el-row class="image-row">
+            <el-col :span="8" class="image-col">
+              <img src="@/assets/images/hanzo.png" class="image" @click="sendMessage('image', 'hanzo')">
+            </el-col>
+            <el-col :span="8" class="image-col">
+              <img src="@/assets/images/mccree.png" class="image" @click="sendMessage('image', 'mccree')">
+            </el-col>
+            <el-col :span="8" class="image-col">
+              <img src="@/assets/images/soldier76.png" class="image" @click="sendMessage('image', 'soldier76')">
+            </el-col>
+          </el-row>
         </div>
-        <div class="btn-col">
-          <el-button type="primary" icon="el-icon-s-promotion" @click="sendMessage('text')" class="send-btn" >送出</el-button>
         </div>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 import moment from 'moment';
+import { getAllMessages } from '@/api/message';
 export default {
   name: 'Home',
-  // sockets: {
-  //   //查看socket是否渲染成功
-  //   connect() {
-  //     console.log("链接成功");
-  //   },
-  //   getMessage(data) {
-  //     console.log(data);
-  //   }
-  // },
   data() {
     return {
-      get userName() {
-        return localStorage.getItem('userName');
-      },
       messageStack: [],
       message: '',
+      inputClass: null,
+      imageVisible: false,
     }
   },
+  computed: {
+    ...mapGetters('common', ['userName']),
+  },
   methods: {
-    sendMessage(type) {
+    sendMessage(type, imgName) {
+      let content;
+      if (type === 'text') {
+        content = this.message;
+        this.message = '';
+      } else if (type === 'image') {
+        content = imgName;
+        this.imageVisible = false;
+        this.inputClass = 'input-go-down';
+      } else {
+        content = null;
+      }
       this.$socket.emit('sendMessage', {
         type,
+        content,
         sender: this.userName,
-        content: this.message,
-        time: moment.valueOf(),
+        time: moment().valueOf(),
       });
     },
+    toggleImage() {
+      if (this.imageVisible) {
+        this.inputClass = 'input-go-down';
+      } else {
+        this.inputClass = 'input-go-up';
+      }
+      this.imageVisible = !this.imageVisible;
+    }
   },
-  mounted() {
-    console.log(this);
+  async mounted() {
     this.$socket.emit('login',{
       username: this.userName,
-      password: 'password'
     });
-    this.sockets.listener.subscribe('getMessage', (obj) => {
-      console.log(obj);
-      obj.time = moment(obj.time).format('MM-DD HH:mm:ss');
-      this.messageStack.push(obj);
-      this.$nextTick(() => {
-        this.$refs.messageArea.scrollTop = this.$refs.messageArea.scrollHeight;
+    try {
+      this.sockets.listener.subscribe('getMessage', (obj) => {
+        if (obj.type === 'image') {
+          obj.content = require(`@/assets/images/${obj.content}.png`);
+        }
+        obj.time = moment(obj.time).format('MM-DD HH:mm:ss');
+        this.messageStack.push(obj);
+        this.$nextTick(() => {
+          this.$refs.messageArea.scrollTop = this.$refs.messageArea.scrollHeight;
+        });
       });
+    } catch (err) {
+      console.log(err);
+    }
+    const result = await getAllMessages();
+    this.messageStack = result.map(item => {
+      if (item.type === 'image') {
+        item.content = require(`@/assets/images/${item.content}.png`);
+      }
+      item.time = moment(item.time).format('MM-DD HH:mm:ss');
+      return item;
     });
   },
 }
 </script>
 
 <style lang="scss">
+  .input-go-up {
+    margin-top: 10px;
+    animation: up 0.7s;
+    animation-fill-mode: forwards;
+    background-color: white;
+  }
+
+  .input-go-down {
+    animation: down 0.7s;
+  }
+
+  @keyframes up {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-100px);
+    }
+  }
+
+  @keyframes down {
+    from {
+      transform: translateY(-100px);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
   $message-font-size: 14px;
   $label-font-size: 10px;
   // extends
@@ -101,6 +184,9 @@ export default {
     border: 1px solid rgba(148, 78, 32, 0.2);
     border-radius: 15px;
     padding: 10px;
+  }
+  %message-image {
+    height: 150px;
   }
   %message-time {
     font-size: $label-font-size;
@@ -133,6 +219,9 @@ export default {
             @extend %message-content;
             margin-right: 3px;
           }
+          .message-image {
+            @extend %message-image;
+          }
           .message-time {
             @extend %message-time;
           }
@@ -154,6 +243,9 @@ export default {
           .message-content {
             @extend %message-content;
             background-color: rgba(148, 78, 32, 0.2);
+          }
+          .message-image {
+            @extend %message-image;
           }
           .message-time {
             @extend %message-time;
@@ -182,6 +274,27 @@ export default {
           text-align: right;
           .send-btn {
             width: 100px;
+          }
+        }
+      }
+
+      .image-area {
+        margin-top: 10px;
+        .image-row {
+          display: flex;
+          justify-content: space-between;
+          .image-col {
+            text-align: center;
+            .image {
+              // width: 90%;
+              height: 100px;
+              position: relative;
+              z-index: 1;
+              &:hover {
+                height: 140px;
+                z-index: 2;
+              }
+            }
           }
         }
       }
