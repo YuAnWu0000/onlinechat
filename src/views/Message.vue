@@ -116,7 +116,7 @@ export default {
         }
         obj.time = moment(obj.time).format('MM-DD HH:mm:ss');
         this.messageStack.push(obj);
-        this.$nextTick(() => {
+        this.$nextTick().then(() => {
           this.$refs.messageArea.scrollTop = this.$refs.messageArea.scrollHeight;
         });
       });
@@ -124,12 +124,15 @@ export default {
       console.log(err);
     }
     const result = await getAllMessages();
-    this.messageStack = result.map(item => {
-      if (item.type === 'image') {
-        item.content = require(`@/assets/images/${item.content}.png`);
+    result.forEach(message => {
+      if (message.type === 'image') {
+        message.content = require(`@/assets/images/${message.content}.png`);
       }
-      item.time = moment(item.time).format('MM-DD HH:mm:ss');
-      return item;
+      message.time = moment(message.time).format('MM-DD HH:mm:ss');
+      this.messageStack.push(message);
+    });
+    this.$nextTick().then(() => {
+      this.$refs.messageArea.scrollTop = this.$refs.messageArea.scrollHeight;
     });
   },
 }
