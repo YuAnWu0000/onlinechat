@@ -1,27 +1,23 @@
 <template>
   <div class="home">
-    <el-input v-model="userName" placeholder="请输入名稱"></el-input>
+    <el-input v-model="inputName" placeholder="请输入名稱"></el-input>
     <el-button type="primary" @click="readyToChat()">開始聊天</el-button>
   </div>
 </template>
 
 <script>
-/*eslint-disable*/
+import { mapActions } from "vuex";
 export default {
   name: 'Home',
   data() {
     return {
-      get userName() {
-        return localStorage.getItem('userName');
-      },
-      set userName(value) {
-        localStorage.setItem('userName', value);
-      },
+      inputName: '',
     }
   },
   methods: {
+    ...mapActions('common', ['setUserName']),
     readyToChat() {
-      // this.userName = this.userName;
+      this.setUserName(this.inputName);
       this.$router.push('/message');
     },
   }

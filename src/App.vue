@@ -13,12 +13,6 @@ export default {
   },
   data() {
     return {
-      get userName() {
-        return localStorage.getItem('userName');
-      },
-      set userName(val) {
-        localStorage.setItem('userName', this.userName);
-      }
     }
   }
 }

@@ -28,36 +28,28 @@
 </template>
 
 <script>
-/*eslint-disable*/
+import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      get userName() {
-        return localStorage.getItem('userName');
-      },
-      set userName(value) {
-        localStorage.setItem('userName', value);
-      },
       dialogVisible: false,
     }
   },
+  computed: {
+    ...mapGetters('common', ['userName'])
+  },
   methods: {
-    storageHandler() {
-      console.log('storage change!!');
-      this.userName = localStorage.getItem('userName');
-    },
+    ...mapActions('common', ['clearUserName']),
     popOut() {
       this.dialogVisible = true;
     },
     logOut() {
-      localStorage.clear();
+      this.clearUserName();
       this.$router.push('/');
-      // localStorage.removeItem("userName");
       this.dialogVisible = false;
     }
   },
   mounted() {
-    window.addEventListener('storage', this.storageHandler);
   }
 };
 </script>

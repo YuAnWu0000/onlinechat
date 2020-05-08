@@ -5,6 +5,7 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import VueSocketIO from 'vue-socket.io';
 import SocketIO from "socket.io-client";
+import store from './store'
 
 // var options = { path: "/" };
 Vue.use(new VueSocketIO({
@@ -30,7 +31,8 @@ new Vue({
   //     console.log(data);
   //   }
   // },
-  router,
   el: '#app',
+  router,
+  store,
   render: h => h(App)
 }).$mount('#app')
