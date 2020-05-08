@@ -60,8 +60,6 @@ export default {
         content: this.message,
         time: moment.valueOf(),
       });
-      console.log(this.$refs.messageArea);
-      this.$refs.messageArea.scrollTop = this.$refs.messageArea.scrollHeight;
     },
   },
   mounted() {
@@ -74,9 +72,9 @@ export default {
       console.log(obj);
       obj.time = moment(obj.time).format('MM-DD HH:mm:ss');
       this.messageStack.push(obj);
-      this.$nextTick(function () {
+      this.$nextTick(() => {
         this.$refs.messageArea.scrollTop = this.$refs.messageArea.scrollHeight;
-      })
+      });
     });
   },
 }

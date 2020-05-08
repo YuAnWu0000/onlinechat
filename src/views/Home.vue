@@ -16,10 +16,8 @@ export default {
   },
   methods: {
     ...mapActions('common', ['setUserName']),
-    ...mapActions('navbar', ['setActiveMenu']),
     readyToChat() {
       this.setUserName(this.inputName);
-      this.setActiveMenu('2');
       this.$router.push('/message');
     },
   }
