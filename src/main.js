@@ -10,7 +10,7 @@ import store from './store'
 // var options = { path: "/" };
 Vue.use(new VueSocketIO({
     debug: true,
-    connection: SocketIO('http://localhost:3000'),
+    connection: SocketIO(process.env.VUE_APP_API_BASE_URL),
     // vuex: {
     //     store,
     //     actionPrefix: 'SOCKET_',
@@ -22,15 +22,6 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false
 
 new Vue({
-  // sockets: {
-  //   //查看socket是否渲染成功
-  //   connect() {
-  //     console.log("链接成功");
-  //   },
-  //   getMessage(data) {
-  //     console.log(data);
-  //   }
-  // },
   el: '#app',
   router,
   store,

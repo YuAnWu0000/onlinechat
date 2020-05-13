@@ -106,9 +106,6 @@ export default {
     }
   },
   async mounted() {
-    this.$socket.emit('login',{
-      username: this.userName,
-    });
     try {
       this.sockets.listener.subscribe('getMessage', (obj) => {
         if (obj.type === 'image') {
@@ -123,6 +120,7 @@ export default {
     } catch (err) {
       console.log(err);
     }
+    // 先載入先前的對話紀錄
     const result = await getAllMessages();
     result.forEach(message => {
       if (message.type === 'image') {
@@ -133,6 +131,10 @@ export default {
     });
     this.$nextTick().then(() => {
       this.$refs.messageArea.scrollTop = this.$refs.messageArea.scrollHeight;
+      // 再推播登入歡迎訊息
+      this.$socket.emit('login', {
+        username: this.userName,
+      });
     });
   },
 }
