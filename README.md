@@ -11,8 +11,6 @@ npm run serve
 ```
 ## Demo
 
-{%youtube HDRsr2GW2UU %}
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/HDRsr2GW2UU/0.jpg)](https://www.youtube.com/watch?v=HDRsr2GW2UU)
 
-:::info
-:pushpin: Wanna see backend repo? ➜ [onlinechat-api](https://github.com/YuAnWu0000/onlinechat-api) 
-:::
+:pushpin: Wanna see backend repo? ➜ [onlinechat-api](https://github.com/YuAnWu0000/onlinechat-api)
