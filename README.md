@@ -5,25 +5,14 @@
 npm install
 ```
 
-### Compiles and hot-reloads for development
+## Compiles and hot-reloads for development
 ```
 npm run serve
 ```
+## Demo
 
-### Compiles and minifies for production
-```
-npm run build
-```
+{%youtube HDRsr2GW2UU %}
 
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+:::info
+:pushpin: Wanna see backend repo? ➜ [onlinechat-api](https://github.com/YuAnWu0000/onlinechat-api) 
+:::
